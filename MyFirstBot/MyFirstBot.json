@@ -1,0 +1,16 @@
+{
+  "name": "Myae tank",
+  "version": "1.0",
+  "authors": [
+    "mangG907",
+    "kimwonjoon"
+  ],
+  "description": "A sample bot that is probably the first bot you will learn about.",
+  "homepage": "",
+  "countryCodes": [
+    "us",
+    "dk"
+  ],
+  "platform": "JVM",
+  "programmingLang": "Java 11"
+}
