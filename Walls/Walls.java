@@ -1,14 +1,7 @@
 import dev.robocode.tankroyale.botapi.*;
 import dev.robocode.tankroyale.botapi.events.*;
+// import java.awt.Color;
 
-// ------------------------------------------------------------------
-// Walls
-// ------------------------------------------------------------------
-// A sample bot original made for Robocode by Mathew Nelson.
-// Ported to Robocode Tank Royale by Flemming N. Larsen.
-//
-// Moves around the outer edge with the gun facing in.
-// ------------------------------------------------------------------
 public class Walls extends Bot {
 
     boolean peek; // Don't turn if there's a bot there
@@ -28,21 +21,20 @@ public class Walls extends Bot {
     @Override
     public void run() {
         // Set colors
-        setBodyColor(Color.BLACK);
-        setTurretColor(Color.BLACK);
-        setRadarColor(Color.ORANGE);
-        setBulletColor(Color.CYAN);
-        setScanColor(Color.CYAN);
+        setBodyColor("black");
+        setTurretColor("black");
+        setRadarColor("orange");
+        setBulletColor("cyan");
+        setScanColor("cyan");
 
         // Initialize moveAmount to the maximum possible for the arena
         moveAmount = Math.max(getArenaWidth(), getArenaHeight());
         // Initialize peek to false
         peek = false;
 
-        // turn to face a wall.
-        // `getDirection() % 90` means the remainder of getDirection() divided by 90.
+        // Turn to face a wall.
         turnRight(getDirection() % 90);
-        forward(moveAmount);
+        forward(moveAmount); // Move to the wall
 
         // Turn the gun to turn right 90 degrees.
         peek = true;
@@ -51,38 +43,78 @@ public class Walls extends Bot {
 
         // Main loop
         while (isRunning()) {
-            // Peek before we turn when forward() completes.
-            peek = true;
-            // Move up the wall
-            forward(moveAmount);
-            // Don't peek now
-            peek = false;
-            // Turn to the next wall
-            turnRight(90);
+            peek = true; // Peek before we turn when forward() completes.
+            forward(moveAmount); // Move up the wall
+            peek = false; // Don't peek now
+            turnRight(90); // Turn to the next wall
+            turnGunRight(90);
         }
     }
 
     // We hit another bot -> move away a bit
     @Override
     public void onHitBot(HitBotEvent e) {
-        // If he's in front of us, set back up a bit.
-        var bearing = bearingTo(e.getX(), e.getY());
+        var bearing = calcAngleTo(e.getX(), e.getY());
         if (bearing > -90 && bearing < 90) {
-            back(100);
-        } else { // else he's in back of us, so set ahead a bit.
-            forward(100);
+            back(100); // Back up if the enemy is in front
+        } else {
+            forward(100); // Move forward if the enemy is behind
         }
     }
 
-    // We scanned another bot -> fire!
+    // We scanned another bot -> predict and fire!
     @Override
     public void onScannedBot(ScannedBotEvent e) {
-        fire(2);
-        // Note that scan is called automatically when the bot is turning.
-        // By calling it manually here, we make sure we generate another scan event if there's a bot
-        // on the next wall, so that we do not start moving up it until it's gone.
+        double enemyX = e.getX();
+        double enemyY = e.getY();
+        double enemyVelocity = e.getVelocity();
+        double enemyHeading = e.getHeading();
+
+        // Calculate the enemy's predicted position
+        double timeToHit = calcTimeToHit(enemyX, enemyY);
+        double predictedX = enemyX + Math.sin(Math.toRadians(enemyHeading)) * enemyVelocity * timeToHit;
+        double predictedY = enemyY + Math.cos(Math.toRadians(enemyHeading)) * enemyVelocity * timeToHit;
+
+        // Fire at the predicted position
+        fireAt(predictedX, predictedY);
+        
+        // Optionally, continue scanning
         if (peek) {
-            rescan();
+            turnGunRight(360); // Continue scanning
         }
     }
+
+    private double calcTimeToHit(double targetX, double targetY) {
+        // Calculate the time it will take for the bullet to reach the target
+        double distanceToTarget = calcDistanceTo(targetX, targetY);
+        double bulletSpeed = 3; // Adjust bullet speed if necessary
+        return distanceToTarget / bulletSpeed; // time = distance / speed
+    }
+
+    // Distance calculation
+    private double calcDistanceTo(double x, double y) {
+        double dx = x - getX();
+        double dy = y - getY();
+        return Math.sqrt(dx * dx + dy * dy); // Euclidean distance
+    }
+
+    // Angle calculation
+    private double calcAngleTo(double x, double y) {
+        double dx = x - getX();
+        double dy = y - getY();
+        return Math.toDegrees(Math.atan2(dy, dx)); // Convert radians to degrees
+    }
+
+    // Fire at the predicted position
+    private void fireAt(double x, double y) {
+        double angleToTarget = calcAngleTo(x, y);
+        double bearing = angleToTarget - getGunHeading(); // Get the angle difference
+        // Normalize the bearing to be between -180 and 180
+        while (bearing > 180) bearing -= 360;
+        while (bearing < -180) bearing += 360;
+
+        turnGunRight(bearing); // Adjust the gun's angle
+        fire(3); // Fire at max power
+    }
+
 }
