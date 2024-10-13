@@ -1,121 +1,123 @@
-// import dev.robocode.tankroyale.botapi.*;
-// import dev.robocode.tankroyale.botapi.events.*;
-// import java.awt.Color;
+/*import dev.robocode.tankroyale.botapi.*;
+import dev.robocode.tankroyale.botapi.events.*;
+import java.awt.Color;
 
-// public class test_k extends Bot {
+public class test_k extends Bot {
 
-//     boolean movingForward = false; // 기본 방향 설정
-//     double moveAmount = 20; // 기본 이동량 설정
-//     double desiredDistance = 50; // 원하는 거리 설정
+    boolean movingForward = false; // 기본 방향 설정
+    double moveAmount = 20; // 기본 이동량 설정
+    double desiredDistance = 50; // 원하는 거리 설정
 
-//     public static void main(String[] args) {
-//         new test_k().start();
-//     }
+    public static void main(String[] args) {
+        new test_k().start();
+    }
 
-//     test_k() {
-//         super(BotInfo.fromFile("test_k.json"));
-//     }
+    test_k() {
+        super(BotInfo.fromFile("test_k.json"));
+    }
 
-//     @Override
-//     public void run() {
-//         setColors();
-//         while (isRunning()) {
-//             // 스캔 계속 진행
-//             turnGunLeft(360); // 360도로 스캔을 해
-//         }
-//     }
+    @Override
+    public void run() {
+        setColors();
+        while (isRunning()) {
+            // 스캔 계속 진행
+            turnGunLeft(360); // 360도로 스캔을 해
+        }
+    }
 
-//     @Override // 상대방이 스캔이 된다면 아래의 이벤트 동작 시작
-//     public void onScannedBot(ScannedBotEvent e) {
-//         double enemyX = e.getX(); // 적의 X 좌표
-//         double enemyY = e.getY(); // 적의 Y 좌표
-//         double distanceToEnemy = calcDistanceTo(enemyX, enemyY); // 적까지의 거리
+    @Override // 상대방이 스캔이 된다면 아래의 이벤트 동작 시작
+    public void onScannedBot(ScannedBotEvent e) {
+        double enemyX = e.getX(); // 적의 X 좌표
+        double enemyY = e.getY(); // 적의 Y 좌표
+        double distanceToEnemy = calcDistanceTo(enemyX, enemyY); // 적까지의 거리
 
-//         // 원하는 거리보다 멀면 다가감
-//         if (distanceToEnemy > desiredDistance) {
-//             // 적에게 다가가는 각도 계산
-//             turnToFaceTarget(enemyX, enemyY);
-//             // 회전하며 다가가기
-//             moveWithZigzag(enemyX, enemyY);
-//         } else {
-//             // 적정 거리에 도달하면 총 발사
-//             fireAtOptimalDistance(distanceToEnemy);
-//         }
-//     }
+        // 원하는 거리보다 멀면 다가감
+        if (distanceToEnemy > desiredDistance) {
+            // 적에게 다가가는 각도 계산
+            turnToFaceTarget(enemyX, enemyY);
+            // 회전하며 다가가기
+            moveWithZigzag(enemyX, enemyY);
+        } else {
+            // 적정 거리에 도달하면 총 발사
+            fireAtOptimalDistance(distanceToEnemy);
+        }
+    }
 
-//     // 각도를 계산하는 함수
-//     private double calcAngleTo(double x, double y) {
-//         double dx = x - getX();
-//         double dy = y - getY();
-//         return Math.toDegrees(Math.atan2(dy, dx)); // 라디안에서 각도로 변환
-//     }
+    // 각도를 계산하는 함수
+    private double calcAngleTo(double x, double y) {
+        double dx = x - getX();
+        double dy = y - getY();
+        return Math.toDegrees(Math.atan2(dy, dx)); // 라디안에서 각도로 변환
+    }
 
-//     // 거리를 계산하는 함수
-//     private double calcDistanceTo(double x, double y) {
-//         double dx = x - getX();
-//         double dy = y - getY();
-//         return Math.sqrt(dx * dx + dy * dy); // 유클리디안 거리
-//     }
+    // 거리를 계산하는 함수
+    private double calcDistanceTo(double x, double y) {
+        double dx = x - getX();
+        double dy = y - getY();
+        return Math.sqrt(dx * dx + dy * dy); // 유클리디안 거리
+    }
 
-//     private void moveWithZigzag(double x, double y) {
-//         double dx = x - getX();
-//         double dy = y - getY();
-//         double angleToTarget = Math.toDegrees(Math.atan2(dy, dx));
-//         double targetAngle = Utils.normalRelativeAngleDegrees(angleToTarget - getDirection());
-//         turnRight(targetAngle);
-//         for (int i = 0; i < 5; i++) {
-//             forward(Math.hypot(dx, dy) / 5);
-//             turnRight(20); // 무빙을 위한 각도 조정
-//             forward(Math.hypot(dx, dy) / 5);
-//             turnLeft(20); // 무빙을 위한 각도 조정
-//         }
-//     }
+    private void moveWithZigzag(double x, double y) {
+        double dx = x - getX();
+        double dy = y - getY();
+        double angleToTarget = Math.toDegrees(Math.atan2(dy, dx));
+        double targetAngle = Utils.normalRelativeAngleDegrees(angleToTarget - getDirection());
+        turnRight(targetAngle);
+        for (int i = 0; i < 5; i++) {
+            forward(Math.hypot(dx, dy) / 5);
+            turnRight(20); // 무빙을 위한 각도 조정
+            forward(Math.hypot(dx, dy) / 5);
+            turnLeft(20); // 무빙을 위한 각도 조정
+        }
+    }
 
-//     private void fireAtOptimalDistance(double distance) {
-//         if (distance < 200) {
-//             fire(3); // 최대 데미지
-//         } else if (distance < 400) {
-//             fire(2);
-//         } else {
-//             fire(1);
-//         }
-//     }
+    private void fireAtOptimalDistance(double distance) {
+        if (distance < 200) {
+            fire(3); // 최대 데미지
+        } else if (distance < 400) {
+            fire(2);
+        } else {
+            fire(1);
+        }
+    }
 
-//     @Override
-//     public void onHitBot(HitBotEvent e) {
-//         // 적과 충돌 시 방향 전환
-//         reverseDirection();
-//     }
+    @Override
+    public void onHitBot(HitBotEvent e) {
+        // 적과 충돌 시 방향 전환
+        reverseDirection();
+    }
 
-//     @Override
-//     public void onHitWall(HitWallEvent e) {
-//         // 벽에 부딪히면 방향 전환
-//         reverseDirection();
-//     }
+    @Override
+    public void onHitWall(HitWallEvent e) {
+        // 벽에 부딪히면 방향 전환
+        reverseDirection();
+    }
 
-//     private void reverseDirection() {
-//         if (movingForward) {
-//             setBack(100);
-//             movingForward = false;
-//         } else {
-//             setForward(100);
-//             movingForward = true;
-//         }
-//     }
+    private void reverseDirection() {
+        if (movingForward) {
+            setBack(100);
+            movingForward = false;
+        } else {
+            setForward(100);
+            movingForward = true;
+        }
+    }
 
-//     private void turnToFaceTarget(double x, double y) {
-//         double bearing = calcAngleTo(x, y) - getDirection(); // 현재 방향과의 차이 계산
-//         turnRight(bearing); // 적에게 바라보도록 회전
-//     }
+    private void turnToFaceTarget(double x, double y) {
+        double bearing = calcAngleTo(x, y) - getDirection(); // 현재 방향과의 차이 계산
+        turnRight(bearing); // 적에게 바라보도록 회전
+    }
 
-//     private void setColors() {
-//         setBodyColor(Color.BLUE);
-//         setTurretColor(Color.YELLOW);
-//         setRadarColor(Color.GREEN);
-//         setBulletColor(Color.RED);
-//         setScanColor(Color.CYAN);
-//     }
-// }
+    private void setColors() {
+        setBodyColor(Color.BLUE);
+        setTurretColor(Color.YELLOW);
+        setRadarColor(Color.GREEN);
+        setBulletColor(Color.RED);
+        setScanColor(Color.CYAN);
+    }
+}*/
+
+// 아래는 퍼온거
 
 import dev.robocode.tankroyale.botapi.*;
 import dev.robocode.tankroyale.botapi.events.*;
@@ -128,161 +130,161 @@ import java.awt.geom.Point2D;
 // ------------------------------------------------------------------
 // Fury
 // ------------------------------------------------------------------
-// A sample bot original made for Robocode by Mathew Nelson.
-// Ported to Robocode Tank Royale by Flemming N. Larsen.
+// Robocode용으로 Mathew Nelson이 처음 만든 샘플 봇.
+// Flemming N. Larsen에 의해 Robocode Tank Royale로 포팅됨.
 //
-// Probably the first bot you will learn about.
-// Moves in a seesaw motion, and spins the gun around at each end.
+// 아마도 당신이 처음 배우게 될 봇일 것입니다.
+// 시소 움직임을 하고, 각 끝에서 포탑을 회전시킵니다.
 // ------------------------------------------------------------------
 public class test_k extends Bot {
-    static Hashtable enemies = new Hashtable();
-    static microEnemy target;
-    static Point2D.Double nextDestination;
-    static Point2D.Double lastPosition;
-    static Point2D.Double myPos;
-    static double myEnergy;
+    static Hashtable enemies = new Hashtable(); // 적을 저장하는 해시테이블
+    static microEnemy target; // 현재 타겟이 되는 적
+    static Point2D.Double nextDestination; // 다음 목적지
+    static Point2D.Double lastPosition; // 마지막 위치
+    static Point2D.Double myPos; // 현재 위치
+    static double myEnergy; // 현재 에너지
 
     public static void main(String[] args) {
-        new test_k().start();
+        new test_k().start(); // 봇 실행
     }
 
     test_k() {
-        super(BotInfo.fromFile("test_k.json"));
+        super(BotInfo.fromFile("test_k.json")); // 봇 설정 파일 읽기
     }
 
-    // Called when a new round is started -> initialize and do some movement
+    // 새로운 라운드가 시작되었을 때 호출됨 -> 초기화하고 움직임을 시작
     @Override
     public void run() {
-        setRadarColor(Color.ORANGE);
-        setGunColor(Color.YELLOW);
-        setBodyColor(Color.RED);
-        setAdjustGunForBodyTurn(true);
-        setAdjustRadarForGunTurn(true);
+        setRadarColor(Color.ORANGE); // 레이더 색상 설정 (주황색)
+        setGunColor(Color.YELLOW); // 총 색상 설정 (노란색)
+        setBodyColor(Color.RED); // 몸체 색상 설정 (빨간색)
+        setAdjustGunForBodyTurn(true); // 몸체 회전 시 총이 따로 움직이도록 설정
+        setAdjustRadarForGunTurn(true); // 총 회전 시 레이더가 따로 움직이도록 설정
 
-        setTurnRadarRight(Double.POSITIVE_INFINITY);
+        setTurnRadarRight(Double.POSITIVE_INFINITY); // 레이더를 무한히 오른쪽으로 회전시킴
 
-        nextDestination = lastPosition = myPos = new Point2D.Double(getX(), getY());
-        target = new microEnemy();
+        nextDestination = lastPosition = myPos = new Point2D.Double(getX(), getY()); // 위치 초기화
+        target = new microEnemy(); // 타겟 초기화
 
         while (isRunning()) {
-            myPos = new Point2D.Double(getX(),getY());
-            myEnergy = getEnergy();
-            if (target.live && getTurnNumber() > 9 ) {
-                doMovementAndGun();
+            myPos = new Point2D.Double(getX(), getY()); // 현재 위치 갱신
+            myEnergy = getEnergy(); // 에너지 갱신
+            if (target.live && getTurnNumber() > 9 ) { // 타겟이 살아있고 라운드가 9턴 이상 진행되었다면
+                doMovementAndGun(); // 이동 및 공격 수행
             }
-            go();
+            go(); // 봇을 실행
         }
     }
 
-    //- stuff -----------------------------------------------------------------------------------------------------------------------------------
+    //- 동작 및 총 -----------------------------------------------------------------------------------------------------------------------------------
     public void doMovementAndGun() {
 
-        double distanceToTarget = myPos.distance(target.pos);
+        double distanceToTarget = myPos.distance(target.pos); // 타겟까지의 거리 계산
 
-        //**** gun ******************//
-        // HeadOnTargeting there's nothing I can say about this
-        if(getGunTurnRemaining() == 0 && myEnergy > 3) {
-            setFire( Math.min(Math.min(myEnergy/6d, 1300d/distanceToTarget), target.energy/3d) );
-            System.out.println("target.id: " + target.pos);
+        //**** 총 관련 ******************//
+        // HeadOnTargeting(헤드온 타겟팅) - 설명할 필요가 없습니다.
+        if (getGunTurnRemaining() == 0 && myEnergy > 3) { // 총이 다 회전했고 에너지가 3 이상일 때 발사
+            setFire( Math.min(Math.min(myEnergy/6d, 1300d/distanceToTarget), target.energy/3d) ); // 발사 에너지 계산 후 발사
+            System.out.println("target.id: " + target.pos); // 타겟 위치 출력
         }
-        setTurnGunLeft(normalizeRelativeAngle(calcAngle(target.pos, myPos) - getGunDirection()));
+        setTurnGunLeft(normalizeRelativeAngle(calcAngle(target.pos, myPos) - getGunDirection())); // 총을 타겟으로 회전
 
-        //**** move *****************//
-        double distanceToNextDestination = myPos.distance(nextDestination);
+        //**** 이동 관련 *****************//
+        double distanceToNextDestination = myPos.distance(nextDestination); // 다음 목적지까지의 거리 계산
 
-        //search a new destination if I reached this one
-        if(distanceToNextDestination < 15) {
+        // 현재 목적지에 도달했으면 새로운 목적지를 검색
+        if (distanceToNextDestination < 15) {
 
-            // there should be better formulas then this one but it is basically here to increase OneOnOne performance. with more bots
-            // addLast will mostly be 1
-            double addLast = 1 - Math.rint(Math.pow(Math.random(), getEnemyCount()));
+            // 더 나은 공식이 있을 수 있지만, 이는 기본적으로 일대일 성능을 높이기 위해 사용됩니다. 더 많은 봇이 있으면 addLast는 대개 1이 됩니다.
+            double addLast = 1 - Math.rint(Math.pow(Math.random(), getEnemyCount())); // 적 수에 따른 값 설정
 
-            Rectangle2D.Double battleField = new Rectangle2D.Double(30, 30, getArenaWidth() - 60, getArenaHeight() - 60);
-            Point2D.Double testPoint;
-            int i=0;
+            Rectangle2D.Double battleField = new Rectangle2D.Double(30, 30, getArenaWidth() - 60, getArenaHeight() - 60); // 전장 설정
+            Point2D.Double testPoint; // 테스트할 지점
+            int i = 0;
 
             do {
-                //	calculate the testPoint somewhere around the current position. 100 + 200*Math.random() proved to be good if there are
-                //	around 10 bots in a 1000x1000 field. but this needs to be limited this to distanceToTarget*0.8. this way the bot wont
-                //	run into the target (should mostly be the closest bot)
-                testPoint = calcPoint(myPos, Math.min(distanceToTarget*0.8, 100 + 200*Math.random()), 2*Math.PI*Math.random());
-                if(battleField.contains(testPoint) && evaluate(testPoint, addLast) < evaluate(nextDestination, addLast)) {
-                    nextDestination = testPoint;
+                // 현재 위치 주변의 테스트 지점을 계산합니다. 100 + 200*Math.random()은 1000x1000 필드에서 약 10개의 봇이 있을 때 적합하다고 증명되었습니다.
+                // 하지만 이것을 distanceToTarget*0.8로 제한해야 합니다. 이를 통해 봇이 타겟으로 달려들지 않게 됩니다 (대개 가장 가까운 봇).
+                testPoint = calcPoint(myPos, Math.min(distanceToTarget * 0.8, 100 + 200 * Math.random()), 2 * Math.PI * Math.random()); 
+                if (battleField.contains(testPoint) && evaluate(testPoint, addLast) < evaluate(nextDestination, addLast)) {
+                    nextDestination = testPoint; // 더 나은 목적지를 찾으면 설정
                 }
-            } while(i++ < 200);
-            System.out.println("nextDestination: " + nextDestination);
-            lastPosition = myPos;
+            } while (i++ < 200);
+            System.out.println("nextDestination: " + nextDestination); // 새로운 목적지 출력
+            lastPosition = myPos; // 마지막 위치 업데이트
 
         } else {
 
-
-            double angle = calcAngle(nextDestination, myPos) - getDirection();
-            double direction = 1;
-            angle = normalizeRelativeAngle(angle);
-            setForward(distanceToNextDestination * direction);
-            setTurnLeft(angle);
-            setMaxSpeed(6d);
+            double angle = calcAngle(nextDestination, myPos) - getDirection(); // 목적지로 향하는 각도 계산
+            double direction = 1; // 이동 방향 설정
+            angle = normalizeRelativeAngle(angle); // 각도를 정규화
+            setForward(distanceToNextDestination * direction); // 앞으로 이동
+            setTurnLeft(angle); // 좌회전하여 목적지로 향함
+            setMaxSpeed(6d); // 최대 속도 설정
         }
     }
 
-    //- eval position ---------------------------------------------------------------------------------------------------------------------------
+    //- 위치 평가 ---------------------------------------------------------------------------------------------------------------------------
     public static double evaluate(Point2D.Double p, double addLast) {
-        // this is basically here that the bot uses more space on the battlefield. In melee it is dangerous to stay somewhere too long.
-        double eval = addLast*0.08/p.distanceSq(lastPosition);
+        // 기본적으로 봇이 전장에서 더 많은 공간을 사용하게 합니다. 전투에서 한 위치에 오래 머무는 것은 위험합니다.
+        double eval = addLast * 0.08 / p.distanceSq(lastPosition); // 마지막 위치와의 거리에 따른 평가 점수 계산
 
-        Enumeration _enum = enemies.elements();
+        Enumeration _enum = enemies.elements(); // 적 목록 반복
         while (_enum.hasMoreElements()) {
             microEnemy en = (microEnemy)_enum.nextElement();
-            // this is the heart of HawkOnFire. So I try to explain what I wanted to do:
-            // -	Math.min(en.energy/myEnergy,2) is multiplied because en.energy/myEnergy is an indicator how dangerous an enemy is
-            // -	Math.abs(Math.cos(calcAngle(myPos, p) - calcAngle(en.pos, p))) is bigger if the moving direction isn't good in relation
-            //		to a certain bot. it would be more natural to use Math.abs(Math.cos(calcAngle(p, myPos) - calcAngle(en.pos, myPos)))
-            //		but this wasn't going to give me good results
-            // -	1 / p.distanceSq(en.pos) is just the normal anti gravity thing
-            if(en.live) {
-                eval += Math.min(en.energy/myEnergy,2) *
+            // HawkOnFire의 핵심 부분입니다. 제가 하려던 것을 설명하겠습니다:
+            // -	Math.min(en.energy/myEnergy, 2)는 적의 에너지가 내 에너지보다 높을수록 더 위험하다는 지표입니다.
+            // -	Math.abs(Math.cos(calcAngle(myPos, p) - calcAngle(en.pos, p)))는 특정 적에 대해 이동 방향이 좋지 않으면 값이 커집니다.
+            //		보다 자연스럽게 하려면 Math.abs(Math.cos(calcAngle(p, myPos) - calcAngle(en.pos, myPos)))를 사용하는 것이 좋지만
+            //		좋은 결과를 주지 않았습니다.
+            // -	1 / p.distanceSq(en.pos)는 기본적인 반중력 메커니즘입니다.
+            if (en.live) {
+                eval += Math.min(en.energy/myEnergy, 2) *
                         (1 + Math.abs(Math.cos(Math.toRadians(calcAngle(myPos, p) - calcAngle(en.pos, p))))) / p.distanceSq(en.pos);
             }
         }
-        return eval;
+        return eval; // 평가 값 반환
     }
 
+    // 적이 스캔되었을 때 호출되는 이벤트 핸들러
     @Override
     public void onScannedBot(ScannedBotEvent e)
     {
-        microEnemy en = (microEnemy)enemies.get(e.getScannedBotId());
+        microEnemy en = (microEnemy)enemies.get(e.getScannedBotId()); // 스캔된 적 정보 가져옴
 
-        if(en == null){
-            en = new microEnemy();
-            enemies.put(e.getScannedBotId(), en);
+        if (en == null) {
+            en = new microEnemy(); // 적이 없으면 새로 생성
+            enemies.put(e.getScannedBotId(), en); // 적 정보를 해시테이블에 추가
         }
 
-        en.energy = e.getEnergy();
-        en.live = true;
-        en.pos = new Point2D.Double(e.getX(), e.getY());
+        en.energy = e.getEnergy(); // 적의 에너지 업데이트
+        en.live = true; // 적이 살아있음을 표시
+        en.pos = new Point2D.Double(e.getX(), e.getY()); // 적의 위치 업데이트
 
-        // normal target selection: the one closer to you is the most dangerous so attack him
-        if(!target.live || myPos.distance(en.pos) < myPos.distance(target.pos)) {
-            target = en;
+        // 타겟 선택: 가장 가까운 적을 타겟으로 설정
+        if (!target.live || myPos.distance(en.pos) < myPos.distance(target.pos)) {
+            target = en; // 타겟 변경
         }
 
-        // locks the radar if there is only one opponent left
-        if(getEnemyCount()==1)	setTurnRadarLeft(getRadarTurnRemaining());
+        // 적이 1명만 남았다면 레이더 고정
+        if (getEnemyCount() == 1) {
+            setTurnRadarLeft(getRadarTurnRemaining());
+        }
     }
 
-    //- math ------------------------------------------------------------------------------------------------------------------------------------
+    //- 수학 관련 함수 ------------------------------------------------------------------------------------------------------------------------------------
     private static Point2D.Double calcPoint(Point2D.Double p, double dist, double ang) {
-        return new Point2D.Double(p.x + dist*Math.sin(ang), p.y + dist*Math.cos(ang));
+        return new Point2D.Double(p.x + dist * Math.sin(ang), p.y + dist * Math.cos(ang)); // 주어진 각도와 거리로 새로운 좌표 계산
     }
 
-    private static double calcAngle(Point2D.Double p2,Point2D.Double p1){
-        return Math.toDegrees(Math.atan2(p2.y - p1.y, p2.x - p1.x));
+    private static double calcAngle(Point2D.Double p2, Point2D.Double p1) {
+        return Math.toDegrees(Math.atan2(p2.y - p1.y, p2.x - p1.x)); // 두 좌표 사이의 각도 계산
     }
 
-    //- microEnemy ------------------------------------------------------------------------------------------------------------------------------
+    //- microEnemy 클래스 ------------------------------------------------------------------------------------------------------------------------------
     public class microEnemy {
-        public Point2D.Double pos;
-        public double energy;
-        public boolean live;
+        public Point2D.Double pos; // 적의 위치
+        public double energy; // 적의 에너지
+        public boolean live; // 적의 생존 여부
     }
 }

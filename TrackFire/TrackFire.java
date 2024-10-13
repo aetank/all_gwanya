@@ -5,7 +5,7 @@ public class TrackFire extends Bot {
 
     boolean movingForward;
     double moveAmount;
-    boolean peek;
+    // boolean peek;
 
     public static void main(String[] args) {
         new TrackFire().start();
@@ -24,32 +24,31 @@ public class TrackFire extends Bot {
         setRadarColor(pink);
         setScanColor(pink);
         setBulletColor(pink);
-	// 싸우는 곳 너비 높이
-	moveAmount = Math.max(getArenaWidth(), getArenaHeight());
-	// Initialize peek to false
-        peek = false;
+	    // // 싸우는 곳 너비 높이
+	    // moveAmount = Math.max(getArenaWidth(), getArenaHeight());
+	    // // Initialize peek to false
+        // peek = false;
 
-        // turn to face a wall.
-        // `getDirection() % 90` means the remainder of getDirection() divided by 90.
-        turnRight(getDirection() % 90);
-        forward(moveAmount);
+        // // turn to face a wall.
+        // // `getDirection() % 90` means the remainder of getDirection() divided by 90.
+        // turnRight(getDirection() % 90);
+        // forward(moveAmount);
 
-        // Turn the gun to turn right 90 degrees.
-        peek = true;
-        turnGunRight(90);
-        turnRight(90);
+        // // Turn the gun to turn right 90 degrees.
+        // peek = true;
+        // turnGunRight(90);
+        // turnRight(90);
 
         // Movement loop
         while (isRunning()) {
-	    turnGunLeft(360);  // Continually scan with gun
+	        setTurnGunLeft(180);  // Continually scan with gun
             // Move forward and rotate gun to scan
             setForward(40000);
             movingForward = true;
             setTurnRight(45);  // 90도 회전
-		// 회전이 끝날때까지 대기
+		    // 회전이 끝날때까지 대기
             waitFor(new TurnCompleteCondition(this));  // Wait until turn is done
-	    setBack(40000);
-            setTurnLeft(90);  // 180도 회전
+            setTurnLeft(180);  // 180도 회전
             waitFor(new TurnCompleteCondition(this));  // Wait until turn is done
             setTurnRight(180); // Rotate right
             waitFor(new TurnCompleteCondition(this));  // Wait until turn is done
@@ -58,15 +57,30 @@ public class TrackFire extends Bot {
 
     @Override
     public void onScannedBot(ScannedBotEvent e) {
+        double distance = Math.hypot(e.getX() - getX(), e.getY() - getY());
         // Calculate bearing and adjust gun position
         var bearingFromGun = gunBearingTo(e.getX(), e.getY());
         turnGunLeft(bearingFromGun);
 
+        double firePower;
+        if (distance < 50) {
+            firePower = 3;  // 아주 가까운 거리: 최대 데미지
+        } else if (distance < 150) {
+            firePower = 2.5;  // 가까운 거리: 높은 데미지
+        } else if (distance < 300) {
+            firePower = 2;  // 중간 거리: 중간 데미지
+        } else if (distance < 500) {
+            firePower = 1.5;  // 조금 먼 거리: 약간 낮은 데미지
+        } else {
+            firePower = 1;  // 매우 먼 거리: 최소 데미지
+        }
+
         // Fire if aligned and gun is ready
-        //if (Math.abs(bearingFromGun) <= 3 && getGunHeat() == 0) {
+        if (Math.abs(bearingFromGun) <= 3 && getGunHeat() == 0) {
         //    fire(Math.min(3 - Math.abs(bearingFromGun), getEnergy() - .1));
-        //}
-	fire(1);
+            fire(firePower);
+        }
+	    // fire(1);
 
         // Rescan if gun is aligned with target
         if (bearingFromGun == 0) {
