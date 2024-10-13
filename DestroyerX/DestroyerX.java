@@ -1,29 +1,32 @@
 import dev.robocode.tankroyale.botapi.*;
 import dev.robocode.tankroyale.botapi.events.*;
 
-public class TrackFire extends Bot {
+public class DestroyerX extends Bot {
 
     boolean movingForward;
     double moveAmount;
     // boolean peek;
 
     public static void main(String[] args) {
-        new TrackFire().start();
+        new DestroyerX().start();
     }
 
-    TrackFire() {
-        super(BotInfo.fromFile("TrackFire.json"));
+    DestroyerX() {
+        super(BotInfo.fromFile("DestroyerX.json"));
     }
 
     @Override
     public void run() {
-        // Set colors
-        Color pink = Color.fromString("#FF69B4");
-        setBodyColor(pink);
-        setTurretColor(pink);
-        setRadarColor(pink);
-        setScanColor(pink);
-        setBulletColor(pink);
+        // 탱크 색깔 지정
+        Color white = Color.fromString("#f8f6f6");
+        Color red = Color.fromString("#db0404");
+        Color blue = Color.fromString("#1e73be");
+        Color yellow = Color.fromString("#fbe02c");
+        setBodyColor(white);
+        setTurretColor(red); 
+        setRadarColor(blue); 
+        setScanColor(red);
+        setBulletColor(yellow);
 	    // // 싸우는 곳 너비 높이
 	    // moveAmount = Math.max(getArenaWidth(), getArenaHeight());
 	    // // Initialize peek to false
