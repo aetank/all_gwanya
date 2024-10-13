@@ -11,7 +11,8 @@ import dev.robocode.tankroyale.botapi.events.*;
 // Moves in a seesaw motion, and spins the gun around at each end.
 // ------------------------------------------------------------------
 public class Myaetank extends Bot {
-
+    
+    //boolean movingForward;
     // The main method starts our bot
     public static void main(String[] args) {
         new Myaetank().start();
@@ -34,19 +35,25 @@ public class Myaetank extends Bot {
         }
     }
 
-    // We saw another bot -> fire!
-    @Override
-    public void onScannedBot(ScannedBotEvent e) {
-        fire(1);
-    }
 
-    // We were hit by a bullet -> 총알에 수직으로 돌립니다
+    // We scanned another bot -> fire!
     @Override
-    public void onHitByBullet(HitByBulletEvent e) {
-        // Calculate the bearing to the direction of the bullet
-        var bearing = calcBearing(e.getBullet().getDirection());
+	public void onScannedBot(ScannedBotEvent e) {
+		fire(1);
+	}
 
-        // Turn 90 degrees to the bullet direction based on the bearing
-        turnLeft(90 - bearing);
-    }
+    // We were hit by a bullet -> set turn rate
+    @Override
+	public void onHitByBullet(HitByBulletEvent e) {
+		// Turn to confuse the other bots
+		setTurnRate(5);
+	}
+	
+    // We hit a wall -> move in the opposite direction
+    @Override
+	public void onHitWall(HitWallEvent e) {
+		// Move away from the wall by reversing the target speed.
+		// Note that current speed is 0 as the bot just hit the wall.
+		setTargetSpeed(-1 * getTargetSpeed());
+	}
 }
