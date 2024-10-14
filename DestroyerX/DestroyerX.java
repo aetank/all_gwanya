@@ -44,7 +44,7 @@ public class DestroyerX extends Bot {
 
         // Movement loop
         while (isRunning()) {
-	        setTurnGunLeft(180);  // Continually scan with gun
+            setTurnGunLeft(360);  // Continually scan with gun
             // Move forward and rotate gun to scan
             setForward(40000);
             movingForward = true;
