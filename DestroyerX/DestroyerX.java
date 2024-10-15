@@ -60,28 +60,28 @@ public class DestroyerX extends Bot {
 
     @Override
     public void onScannedBot(ScannedBotEvent e) {
-        double distance = Math.hypot(e.getX() - getX(), e.getY() - getY());
+        // double distance = Math.hypot(e.getX() - getX(), e.getY() - getY());
         // Calculate bearing and adjust gun position
         var bearingFromGun = gunBearingTo(e.getX(), e.getY());
         turnGunLeft(bearingFromGun);
 
-        double firePower;
-        if (distance < 50) {
-            firePower = 3;  // 아주 가까운 거리: 최대 데미지
-        } else if (distance < 150) {
-            firePower = 2.5;  // 가까운 거리: 높은 데미지
-        } else if (distance < 300) {
-            firePower = 2;  // 중간 거리: 중간 데미지
-        } else if (distance < 500) {
-            firePower = 1.5;  // 조금 먼 거리: 약간 낮은 데미지
-        } else {
-            firePower = 1;  // 매우 먼 거리: 최소 데미지
-        }
+        // double firePower;
+        // if (distance < 50) {
+        //     firePower = 3;  // 아주 가까운 거리: 최대 데미지
+        // } else if (distance < 150) {
+        //     firePower = 2.5;  // 가까운 거리: 높은 데미지
+        // } else if (distance < 300) {
+        //     firePower = 2;  // 중간 거리: 중간 데미지
+        // } else if (distance < 500) {
+        //     firePower = 1.5;  // 조금 먼 거리: 약간 낮은 데미지
+        // } else {
+        //     firePower = 1;  // 매우 먼 거리: 최소 데미지
+        // }
 
         // Fire if aligned and gun is ready
         if (Math.abs(bearingFromGun) <= 3 && getGunHeat() == 0) {
-        //    fire(Math.min(3 - Math.abs(bearingFromGun), getEnergy() - .1));
-            fire(firePower);
+           fire(Math.min(3 - Math.abs(bearingFromGun), getEnergy() - .1));
+            // fire(firePower);
         }
 	    // fire(1);
 
